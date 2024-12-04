@@ -63,6 +63,8 @@ Creation date (Newest to Oldest or Oldest to Newest)
 
 These operations help users quickly find and organize their tasks.
 
+5.Search Task:
+The ui comprises a searc bar which allows a user to seach the task by its title ,thereby ensuring seamless user experience
 
 ---
 
