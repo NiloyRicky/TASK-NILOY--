@@ -1,36 +1,38 @@
-import React, { createContext, useContext, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import {
-  addTask,
-  deleteTask,
-  updateTaskStatus,
-} from "./taskSlice"; // Import Redux actions
-
 
 // Create context
 const create = createContext();
 
 function Context({ children }) {
-  const dispatch = useDispatch();
-  const tasks = useSelector((state) => state.tasks); // Access tasks from Redux store
-
   const [formValues, setFormValues] = useState({
     title: "",
     description: "",
     priority: "",
   });
-
+  
+  const [tasks, setTasks] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterBy, setFilterBy] = useState(""); // Filter state
 
+  // Fetch tasks from localStorage
+  useEffect(() => {
+    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    if(savedTasks.length===0){
+setTasks([{id:0,title:"Eating",description:"Eat daily",status:"pending",priority: "High",action:""}])
+    }
+    else{
+      setTasks(savedTasks);
+    }
+   
+  }, []);
+
   // Filter tasks based on search query
-  const filteredTasks =
-    searchQuery.length === 0
-      ? tasks
-      : tasks.filter((task) =>
-          task.title.toLowerCase().includes(searchQuery.toLowerCase())
-        );
+  const filteredTasks = searchQuery.length === 0
+    ? tasks
+    : tasks.filter((task) =>
+        task.title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
 
   // Sort tasks based on selected filter
   const sortedTasks = [...filteredTasks].sort((a, b) => {
@@ -56,27 +58,43 @@ function Context({ children }) {
   // Add new task
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newTask = {
-      ...formValues,
-      createdAt: new Date().toISOString(),
-      status: "Pending", // Default status
-    };
-
-    dispatch(addTask(newTask)); // Dispatch Redux action to add task
-    toast.success("Task added! Go to All Task", { position: "top-right" });
-
+    const newTask = { ...formValues, createdAt: new Date().toISOString(), status: "Pending" }; // Default status
+    
+    const updatedTasks = [...tasks, newTask];
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    setTasks(updatedTasks);
+    toast.success("Task added! Go to All TAsk", { position: "top-right" });
+   
     setFormValues({ title: "", description: "", priority: "" });
   };
 
   // Delete a task
   const deleteTaskHandler = (taskId) => {
-    dispatch(deleteTask(taskId)); // Dispatch Redux action to delete task
-    toast.error("Task deleted!", { position: "top-right" });
+    const updatedTasks = tasks.filter((task, index) => index !== taskId);
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+   
+    setTasks(updatedTasks);
+    toast.error("Task deleted !", { position: "top-right" });
+    console.log('toaster workss')
+   
   };
 
-  // Update task status (toggle)
-  const toggleTaskStatus = (taskId) => {
-    dispatch(updateTaskStatus(taskId)); // Dispatch Redux action to update status
+  // Update task status (toggle) red-pending,yellow-in-progress grrn-done
+  const updateTaskStatus = (taskId) => {
+    const updatedTasks = tasks.map((task, index) => {
+      if (index === taskId) {
+        const newStatus =
+          task.status === "Pending"
+            ? "In Progress"
+            : task.status === "In Progress"
+            ? "Completed"
+            : "Pending";
+        return { ...task, status: newStatus };
+      }
+      return task;
+    });
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    setTasks(updatedTasks);
   };
 
   return (
@@ -88,7 +106,7 @@ function Context({ children }) {
         setFormValues,
         tasks,
         deleteTaskHandler,
-        toggleTaskStatus,
+        updateTaskStatus,
         searchQuery,
         setSearchQuery,
         filteredTasks: sortedTasks, // Apply sorting after filtering
