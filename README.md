@@ -150,3 +150,5 @@ React-Toastify: Used for displaying toast notifications.
 Framer Motion: For adding animations to the UI.
 
 React Icons: For adding icons to the application.
+
+Live Demo:https://taskify-niloy.netlify.app/
