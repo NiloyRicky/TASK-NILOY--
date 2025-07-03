@@ -154,6 +154,8 @@ React Icons: For adding icons to the application.
 
 Live Demo:https://taskify-niloy.netlify.app/
 
+Screenshots of the App:
+
 ![Screenshot 2025-07-03 211141](https://github.com/user-attachments/assets/5330d25f-2c11-45de-80f1-dcf1096b612e)
 ![Screenshot 2025-07-03 211129](https://github.com/user-attachments/assets/e0e2d972-6149-4e43-bf28-b86bbcb7fa39)
 ![Screenshot 2025-07-03 211108](https://github.com/user-attachments/assets/09d3d0ae-6747-4616-843d-4b6cdfa9502f)
